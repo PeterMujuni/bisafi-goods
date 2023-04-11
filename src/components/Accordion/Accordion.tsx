@@ -40,18 +40,6 @@ const AccordionComponent = () => {
 					</Typography>
 				</AccordionDetails>
 			</Accordion>
-			<Accordion
-				disabled
-				sx={{ marginBottom: 2 }}
-			>
-				<AccordionSummary
-					expandIcon={<ExpandMoreIcon />}
-					aria-controls='panel3a-content'
-					id='panel3a-header'
-				>
-					<Typography>Disabled Accordion</Typography>
-				</AccordionSummary>
-			</Accordion>
 		</div>
 	);
 }

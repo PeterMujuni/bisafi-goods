@@ -6,7 +6,11 @@ import { ThemeProvider, createTheme} from '@mui/material/styles';
 export default function App({ Component, pageProps }: AppProps) {
   
   const theme = createTheme({
-    
+    palette: {
+		primary: {
+			main: "#02B4E2"
+		}
+	}
   })
   
   return (
