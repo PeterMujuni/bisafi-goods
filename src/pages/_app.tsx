@@ -9,6 +9,9 @@ export default function App({ Component, pageProps }: AppProps) {
     palette: {
 		primary: {
 			main: "#02B4E2"
+		},
+		error: {
+			main: "#FF6347"
 		}
 	}
   })
