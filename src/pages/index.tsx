@@ -1,9 +1,17 @@
 import * as React from "react";
+import uniqid from "uniqid";
 import Head from "next/head";
 import { Inter } from "next/font/google";
+import { Item } from "./items.model";
+import axios from "axios";
 import styles from "@/styles/Home.module.css";
+
+// custom componetns
 import Navbar from "@/components/Navbar/Navbar";
 import AccordionComponent from "@/components/Accordion/Accordion";
+import AppPagination from "@/components/AppPagination/AppPagination";
+
+// mui components
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -16,14 +24,13 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import Avatar from "@mui/material/Avatar";
-import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
+import Container from "@mui/material/Container";
+// mui icons
+import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
-import { Item } from "./items.model";
-import axios from "axios";
-import { Container } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,6 +46,8 @@ const style = {
 	p: 4,
 };
 
+const pageSize = 3;
+
 export default function Home() {
 	const [open, setOpen] = React.useState(false);
 	const [selectedImage, setSelectedImage] = React.useState("");
@@ -48,17 +57,35 @@ export default function Home() {
 	const [quantity, setQuantity] = React.useState("");
 	const [unit, setUnit] = React.useState("");
 	const [items, setItems] = React.useState<Item[]>([]);
-	const [search, setSearch] = React.useState("")
+	const [pageItems, setPageItems] = React.useState<Item[]>([]);
+	const [search, setSearch] = React.useState("");
+	const [pagination, setPagination] = React.useState({
+		count: 0,
+		from: 0,
+		to: pageSize,
+	});
 
 	React.useEffect(() => {
 		const items = JSON.parse(localStorage.getItem("items") || "[]");
 		if (items.length != 0) {
+			const data = items.slice(pagination.from, pagination.to);
+			console.log("useeffect getItem render");
 			setItems(items);
+			setPageItems(data);
+			setPagination((prev) => {
+				return { ...prev, count: items.length };
+			});
 		}
-	}, []);
-	
+	}, [pagination.from, pagination.to]);
+
 	React.useEffect(() => {
+		if (items.length > 3) {
+			setPagination((prev) => {
+				return { ...prev, count: items.length };
+			});
+		}
 		localStorage.setItem("items", JSON.stringify(items));
+		console.log("useeffect setItem render");
 	}, [items]);
 
 	const handleOpen = () => setOpen(true);
@@ -71,8 +98,8 @@ export default function Home() {
 	};
 
 	const submitHandler = async () => {
-
 		const item = {
+			id: uniqid(),
 			itemName,
 			quantity,
 			unit,
@@ -81,11 +108,12 @@ export default function Home() {
 		};
 
 		setItems((prev) => {
-			return [
-				...prev,
-				item
-			]
-		})
+			return [...prev, item];
+		});
+
+		setPageItems((prev) => {
+			return [...prev, item];
+		});
 
 		clearSubmitFieldsHandler();
 		handleClose();
@@ -93,7 +121,7 @@ export default function Home() {
 
 	const clearSubmitFieldsHandler = () => {
 		setItemName("");
-		setItemPrice("")
+		setItemPrice("");
 		setQuantity("");
 		setUnit("");
 		setSelectedImage("");
@@ -146,20 +174,34 @@ export default function Home() {
 							),
 						}}
 					/>
-					<AccordionComponent items={items} search={search} />
+					<AccordionComponent
+						items={pageItems}
+						search={search}
+					/>
 					<Button
 						variant='contained'
 						color='primary'
 						sx={{
 							color: "white",
 							alignSelf: "flex-end",
-							marginTop: "2rem",
+							marginBlock: "2rem",
 						}}
 						startIcon={<AddIcon />}
 						onClick={handleOpen}
 					>
 						Add Item
 					</Button>
+					{items.length > pageSize && (
+						<AppPagination
+							count={pagination.count}
+							pageSize={pageSize}
+							to={pagination.to}
+							from={pagination.from}
+							setPagination={setPagination}
+							pagination={pagination}
+						/>
+					)}
+
 					<Modal
 						open={open}
 						onClose={handleClose}
@@ -256,7 +298,7 @@ export default function Home() {
 
 											fr.addEventListener("load", () => {
 												const url = fr.result as string;
-												console.log(url);
+												// console.log(url);
 												setSelectedImage(url);
 											});
 
