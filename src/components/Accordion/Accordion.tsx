@@ -26,7 +26,8 @@ interface ItemProps {
 		itemPrice: string;
 		quantity: string;
 		unit: string;
-	}[];
+	}[],
+	search : string,
 }
 
 const AccordionComponent: React.FC<ItemProps> = (props) => {
@@ -40,7 +41,9 @@ const AccordionComponent: React.FC<ItemProps> = (props) => {
 
 	return (
 		<div>
-			{props.items.map((item, index) => (
+			{props.items.filter((item) => {
+				return props.search.toLowerCase() === "" ? item : item.itemName.toLowerCase().includes(props.search)
+			}).map((item, index) => (
 				<Accordion
 					key={index}
 					expanded={expanded === `panel${index}`}

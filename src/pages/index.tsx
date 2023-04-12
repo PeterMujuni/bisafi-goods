@@ -48,6 +48,7 @@ export default function Home() {
 	const [quantity, setQuantity] = React.useState("");
 	const [unit, setUnit] = React.useState("");
 	const [items, setItems] = React.useState<Item[]>([]);
+	const [search, setSearch] = React.useState("")
 
 	React.useEffect(() => {
 		const items = JSON.parse(localStorage.getItem("items") || "[]");
@@ -123,14 +124,15 @@ export default function Home() {
 			<main className={styles.main}>
 				<Container sx={{ display: "flex", flexDirection: "column" }}>
 					<TextField
+						label='Search...'
+						id=''
+						fullWidth
 						sx={{
 							backgroundColor: "white",
 							marginBottom: 2,
 							borderRadius: 0.8,
 						}}
-						label='Search...'
-						id=''
-						fullWidth
+						onChange={(e) => setSearch(e.target.value)}
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position='end'>
@@ -144,7 +146,7 @@ export default function Home() {
 							),
 						}}
 					/>
-					<AccordionComponent items={items} />
+					<AccordionComponent items={items} search={search} />
 					<Button
 						variant='contained'
 						color='primary'
@@ -284,7 +286,7 @@ export default function Home() {
 								<Button
 									variant='contained'
 									color='error'
-									sx={{color: "white"}}
+									sx={{ color: "white" }}
 									fullWidth
 									onClick={clearSubmitFieldsHandler}
 								>
