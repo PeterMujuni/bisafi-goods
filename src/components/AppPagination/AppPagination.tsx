@@ -10,16 +10,12 @@ interface PaginationProps {
 	pageSize: number;
 	to: number;
 	from: number;
-    pagination: {}
+	pagination: {};
 	setPagination: Function;
 }
 
 const AppPagination = (props: PaginationProps) => {
-    
-	const handlePageChange = (
-		event: ChangeEvent<unknown>,
-		page: number
-	) => {
+	const handlePageChange = (event: ChangeEvent<unknown>, page: number) => {
 		const from = (page - 1) * props.pageSize;
 		const to = (page - 1) * props.pageSize + props.pageSize;
 
@@ -40,15 +36,6 @@ const AppPagination = (props: PaginationProps) => {
 			<Pagination
 				count={Math.ceil(props.count / props.pageSize)}
 				size='large'
-				renderItem={(item) => (
-					<PaginationItem
-						slots={{
-							previous: ArrowBackIcon,
-							next: ArrowForwardIcon,
-						}}
-						{...item}
-					/>
-				)}
 				sx={{
 					"& .MuiButtonBase-root.MuiPaginationItem-root.MuiPaginationItem-previousNext":
 						{
@@ -64,9 +51,24 @@ const AppPagination = (props: PaginationProps) => {
 					},
 					"& .MuiPagination-ul": {
 						justifyContent: "center",
+						"&:first-child": {
+							marginRight: "auto",
+						},
+						"&:last-child": {
+							marginLeft: "auto",
+						},
 					},
 				}}
 				onChange={handlePageChange}
+				renderItem={(item) => (
+					<PaginationItem
+						slots={{
+							previous: ArrowBackIcon,
+							next: ArrowForwardIcon,
+						}}
+						{...item}
+					/>
+				)}
 			/>
 		</Box>
 	);
